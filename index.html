@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Pumpkin Patrol 🎃</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game"></canvas>
+
+    <!-- In-game HUD -->
+    <div id="hud" class="hidden">
+      <div class="hud-top">
+        <div class="pill" id="hearts"></div>
+        <div class="pill level-pill">
+          <span id="lvl-name">Level 1</span>
+          <div class="bar"><div id="lvl-bar"></div></div>
+        </div>
+        <div class="pill" id="candy-pill"><span>🍬</span><span id="candy">0</span></div>
+        <div class="pill"><span>⭐</span><span id="score">0</span></div>
+        <button class="icon-btn" data-act="mute" id="btn-mute-hud" title="Sound">🔊</button>
+        <button class="icon-btn" data-act="pause" title="Pause">⏸</button>
+      </div>
+      <div id="bossbar" class="hidden">
+        <span id="boss-name">Boss</span>
+        <div class="bar"><div id="boss-fill"></div></div>
+      </div>
+      <div id="power" class="hidden"></div>
+      <div id="weapons"></div>
+    </div>
+
+    <div id="banner" class="hidden"></div>
+
+    <!-- Title -->
+    <div class="screen" id="scr-title">
+      <div class="panel title-panel">
+        <div class="logo">
+          <span class="logo-pumpkin">🎃</span>
+          <h1>Pumpkin<br>Patrol</h1>
+        </div>
+        <p class="tagline">Shoot the monsters. <b>Save the pumpkins.</b> Collect the candy.</p>
+        <div class="btn-col">
+          <button class="btn big orange" data-act="play">▶ Play</button>
+          <button class="btn purple" data-act="levels">🗺️ Choose Level</button>
+          <div class="btn-row">
+            <button class="btn teal" data-act="book">👻 Ghost Book</button>
+            <button class="btn pink" data-act="album">🏆 Album</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn" data-act="help">❓ How to Play</button>
+            <button class="btn" data-act="mute" id="btn-mute-title">🔊 Sound</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to play -->
+    <div class="screen hidden" id="scr-help">
+      <div class="panel wide">
+        <h2>How to Play</h2>
+        <div class="help-grid">
+          <div class="help-card"><div class="hi">👆</div><b>Tap the sky</b> to shoot.<br>Hold to keep shooting!</div>
+          <div class="help-card"><div class="hi">👣</div><b>Tap the path</b> at the bottom to walk.<br>(Or use ← → / A D keys)</div>
+          <div class="help-card warn"><div class="hi">🎃</div><b>DON'T SHOOT THE PUMPKINS!</b><br>They're on YOUR team!</div>
+          <div class="help-card"><div class="hi">💖</div>Friends with a <b>pink heart</b> are nice. Don't bonk them!</div>
+          <div class="help-card"><div class="hi">🫧</div>Catch ghosts with the <b>Bubble Blaster</b> to fill your Ghost Book!</div>
+          <div class="help-card"><div class="hi">✨</div>Walk into <b>golden pumpkins</b> for power-ups. Baby pumpkins will follow you!</div>
+          <div class="help-card"><div class="hi">🏠</div>Tap a house: <b>TRICK or TREAT?</b></div>
+          <div class="help-card"><div class="hi">🔢</div>Switch weapons with the buttons or keys <b>1–8</b>.</div>
+        </div>
+        <button class="btn orange" data-act="back">Got it! 🎃</button>
+      </div>
+    </div>
+
+    <!-- Level select -->
+    <div class="screen hidden" id="scr-levels">
+      <div class="panel wide">
+        <h2>Choose a World</h2>
+        <div id="level-grid" class="level-grid"></div>
+        <button class="btn" data-act="back">⬅ Back</button>
+      </div>
+    </div>
+
+    <!-- Ghost book -->
+    <div class="screen hidden" id="scr-book">
+      <div class="panel wide">
+        <h2>👻 Ghost Collection Book</h2>
+        <p class="sub" id="book-count"></p>
+        <div id="book-grid" class="book-grid"></div>
+        <button class="btn" data-act="back">⬅ Back</button>
+      </div>
+    </div>
+
+    <!-- Album -->
+    <div class="screen hidden" id="scr-album">
+      <div class="panel wide scroll">
+        <h2>🏆 Halloween Album</h2>
+        <div id="album-items" class="album-items"></div>
+        <h3>Monster Bestiary</h3>
+        <div id="bestiary" class="bestiary"></div>
+        <button class="btn" data-act="back">⬅ Back</button>
+      </div>
+    </div>
+
+    <!-- Level intro -->
+    <div class="screen hidden" id="scr-intro">
+      <div class="panel intro-panel">
+        <div class="intro-level" id="intro-num">Level 1</div>
+        <div class="intro-icon" id="intro-icon">🎃</div>
+        <h2 id="intro-name">Pumpkin Patch</h2>
+        <p class="sub" id="intro-tip"></p>
+        <div id="intro-extra"></div>
+        <div class="rule">DON'T SHOOT THE PUMPKINS! 🎃<br><small>They're on YOUR team!</small></div>
+        <button class="btn big orange" data-act="go">Let's Go! 🎃</button>
+      </div>
+    </div>
+
+    <!-- Pause -->
+    <div class="screen hidden" id="scr-pause">
+      <div class="panel">
+        <h2>Paused 💤</h2>
+        <div class="btn-col">
+          <button class="btn big orange" data-act="resume">▶ Keep Playing</button>
+          <button class="btn purple" data-act="restart">🔄 Restart Level</button>
+          <button class="btn" data-act="menu">🏠 Main Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Level complete -->
+    <div class="screen hidden" id="scr-complete">
+      <div class="panel">
+        <h2 id="complete-title">Level Complete!</h2>
+        <div class="stars" id="complete-stars"></div>
+        <div class="stats" id="complete-stats"></div>
+        <div class="btn-col">
+          <button class="btn big orange" data-act="next">Next World ▶</button>
+          <button class="btn" data-act="menu">🏠 Main Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game over -->
+    <div class="screen hidden" id="scr-over">
+      <div class="panel">
+        <h2>Oh no! 🙈</h2>
+        <p class="sub">The monsters giggled you right out of the patch!</p>
+        <div class="big-emoji">👻😜🧟</div>
+        <div class="btn-col">
+          <button class="btn big orange" data-act="restart">🔄 Try Again</button>
+          <button class="btn" data-act="menu">🏠 Main Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Victory -->
+    <div class="screen hidden" id="scr-victory">
+      <div class="panel">
+        <h2>THE MOON BELCHES OUT<br>ALL THE CANDY!</h2>
+        <div class="big-emoji">🍬🍬🍬🍬🍬🍬🍬</div>
+        <p class="sub">You saved Halloween, Pumpkin Patroller! 🎃👑</p>
+        <div class="stats" id="victory-stats"></div>
+        <div class="btn-col">
+          <button class="btn teal" data-act="book">👻 Ghost Book</button>
+          <button class="btn big orange" data-act="menu">🏠 Main Menu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/backgrounds.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
