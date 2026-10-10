@@ -254,7 +254,7 @@ const UI = (() => {
       row.className = 'beast' + (met ? '' : ' unknown');
       row.appendChild(thumb(58, x => {
         ART[T.art](x, 0.5, { variant: 'baby', rise: 1, seed: 0 });
-      }, !met, type === 'tiny' ? 0.6 : type === 'witch' ? 0.62 : 0.75, type === 'ghoul' ? -6 : 0));
+      }, !met, type === 'tiny' ? 0.6 : type === 'witch' ? 0.62 : type === 'cheer' ? 0.46 : 0.75, type === 'ghoul' ? -6 : type === 'cheer' ? 10 : 0));
       row.insertAdjacentHTML('beforeend', `<div><b>${met ? T.name : '???'}</b>${met ? `${T.desc}<br>Bonked ×${met}` : 'Not met yet!'}</div>`);
       box.appendChild(row);
     });

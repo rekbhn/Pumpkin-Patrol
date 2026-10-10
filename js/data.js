@@ -36,7 +36,7 @@ const ENEMY_TYPES = {
   vampire:  { name: 'Tiny Vampire',       art: 'vampire',  base: 32, r: 30, hp: 2,  pts: 22,  fly: true,  defeat: 'poof',     desc: 'Turns into a bat to escape!' },
   werewolf: { name: 'Werewolf Pup',       art: 'werewolf', base: 32, r: 32, hp: 2,  pts: 18,  walk: true, defeat: 'bonk',     desc: 'Howls… then gets embarrassed.' },
   troll:    { name: 'Baby Troll',         art: 'troll',    base: 32, r: 30, hp: 2,  pts: 20,  walk: true, defeat: 'bonk',     desc: 'Hides behind pumpkins. Aim carefully!' },
-  cheer:    { name: 'Zombie Cheerleader', art: 'cheer',    base: 32, r: 32, hp: 2,  pts: 20,  walk: true, defeat: 'pieces',   desc: 'Waves pompoms while chasing you.' },
+  cheer:    { name: 'Zombie Cheerleader', art: 'cheer',    base: 32, r: 48, hp: 2,  pts: 20,  walk: true, defeat: 'pieces',   desc: 'Waves pompoms while chasing you.' },
   blob:     { name: 'Ghost Blob',         art: 'blob',     base: 30, r: 40, hp: 1,  pts: 15,  fly: true,  ghost: true, defeat: 'split', desc: 'Splits into two smaller ghosts!' },
   vbat:     { name: 'Vampire Bat',        art: 'vbat',     base: 30, r: 24, hp: 1,  pts: 14,  fly: true,  defeat: 'dizzy',    desc: 'Tries to steal your candy!' },
   ghoul:    { name: 'Graveyard Ghoul',    art: 'ghoul',    base: 32, r: 30, hp: 2,  pts: 18,  defeat: 'sink',     desc: 'Pops out of a gravestone.' },

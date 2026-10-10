@@ -63,6 +63,84 @@ function groundShadow(ctx, x, y, rx) {
   ellipse(ctx, x, y, rx, rx * 0.25); ctx.fill();
 }
 
+function teamGradient(ctx, x0, y0, x1, y1) {
+  const g = ctx.createLinearGradient(x0, y0, x1, y1);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.42, '#a855e8');
+  g.addColorStop(1, '#3dce68');
+  return g;
+}
+
+function cheerBow(ctx, swing) {
+  ctx.save();
+  ctx.translate(0, -50);
+  ctx.rotate(swing * 0.04);
+  const g = teamGradient(ctx, -22, -10, 22, 16);
+  for (const s of [-1, 1]) {
+    ctx.save();
+    ctx.translate(s * 11, 0);
+    ctx.rotate(s * -0.25);
+    ellipse(ctx, 0, 0, 13, 8.5);
+    paint(ctx, g, 2);
+    ellipse(ctx, s * -1, 0.4, 6, 4);
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fill();
+    ctx.restore();
+  }
+  circle(ctx, 0, 1, 4);
+  paint(ctx, '#ffffff', 2);
+  circle(ctx, 0, 1, 2);
+  ctx.fillStyle = '#a855e8';
+  ctx.fill();
+  ctx.restore();
+}
+
+function cheerPonytail(ctx, t) {
+  const swing = Math.sin(t * 5) * 5;
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(-14, -46);
+  ctx.quadraticCurveTo(-44, -32, -48 + swing * 0.35, -4);
+  ctx.quadraticCurveTo(-50 + swing, 16, -42 + swing, 32);
+  ctx.quadraticCurveTo(-32 + swing * 0.4, 24, -40 + swing * 0.25, 2);
+  ctx.quadraticCurveTo(-46, -22, -20, -44);
+  ctx.closePath();
+  paint(ctx, shade(ctx, -36, -2, 28, '#ecd4ff', '#6d28d9'), 2.6);
+  const g = teamGradient(ctx, -18, -48, -50, 22);
+  for (const s of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(-18 + s * 3, -46);
+    ctx.quadraticCurveTo(-42 + s * 3, -10, -40 + swing * 0.4 + s * 4, 16);
+    ctx.lineTo(-32 + swing * 0.3 + s * 2, 12);
+    ctx.quadraticCurveTo(-36 + s * 2, -16, -16 + s, -42);
+    ctx.closePath();
+    paint(ctx, g, 1.7);
+  }
+  ctx.restore();
+}
+
+function cheerTitle(ctx) {
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#2a1838';
+  ['Cheer', 'Halloween'].forEach((line, i) => {
+    let size = i === 0 ? 8.2 : 6.4;
+    ctx.font = `700 ${size}px ${FONT}`;
+    while (ctx.measureText(line).width > 40 && size > 4) {
+      size -= 0.15;
+      ctx.font = `700 ${size}px ${FONT}`;
+    }
+    const y = i === 0 ? 10.6 : 17.2;
+    ctx.lineWidth = Math.max(1.6, size * 0.34);
+    ctx.strokeText(line, 0, y);
+    ctx.fillText(line, 0, y);
+  });
+  ctx.restore();
+}
+
 const ART = {
   face: null, // optional override: 'closed' | 'dizzy' | 'wide'
 
@@ -341,16 +419,18 @@ const ART = {
   zombieHead(ctx, t, o = {}) {
     const skin = o.cheer ? '#b8e89c' : '#a6dd8c';
     if (o.cheer) {
-      for (const s of [-1, 1]) {
-        circle(ctx, s * 21, -24, 9); paint(ctx, '#9a5ad8', 2.5);
-        ctx.save(); ctx.translate(s * 15, -30); ctx.fillStyle = '#ff6aa8';
-        ellipse(ctx, -3, 0, 4, 3); ctx.fill(); ellipse(ctx, 3, 0, 4, 3); ctx.fill(); ctx.restore();
-      }
+      cheerBow(ctx, Math.sin(t * 5));
+      circle(ctx, 0, -40, 6.5);
+      paint(ctx, '#9a5ad8', 2.2);
     }
     circle(ctx, 0, -16, 21); paint(ctx, shade(ctx, 0, -16, 21, '#d4f7be', skin), 3);
     if (o.cheer) {
-      ctx.beginPath(); ctx.arc(0, -18, 21, Math.PI * 1.05, Math.PI * 1.95); ctx.quadraticCurveTo(6, -26, -2, -30); ctx.quadraticCurveTo(-10, -26, -20, -24);
-      paint(ctx, '#9a5ad8', 2.5);
+      ctx.beginPath();
+      ctx.arc(0, -20, 18, Math.PI * 1.12, Math.PI * 1.88);
+      ctx.quadraticCurveTo(8, -36, -2, -40);
+      ctx.quadraticCurveTo(-14, -36, -17, -26);
+      ctx.closePath();
+      paint(ctx, shade(ctx, -2, -32, 16, '#c084fc', '#7a36c4'), 2.4);
     } else {
       ctx.beginPath(); ctx.moveTo(-4, -36); ctx.quadraticCurveTo(-2, -46, 6, -44); ctx.quadraticCurveTo(0, -42, 2, -36);
       paint(ctx, '#4f7a3a', 2);
@@ -362,21 +442,69 @@ const ART = {
     ART.blush(ctx, 0, -8, 14, 4.5);
     ART.mouth(ctx, 0, -5, 7, o.open ? 'o' : 'smile');
     if (!o.open) { ctx.fillStyle = '#fff'; ctx.fillRect(1, -4.5, 3, 3); }
+    if (o.cheer && o.tail !== false) cheerPonytail(ctx, t);
   },
 
   zombieBody(ctx, t, o = {}) {
     const step = o.walk ? Math.sin(t * 8) * 2 : 0;
+    if (o.cheer) {
+      const g = teamGradient(ctx, 0, 2, 0, 34);
+      for (const s of [-1, 1]) {
+        const hop = s === -1 ? step : -step;
+        ctx.save();
+        ctx.translate(s * 8, hop);
+        rrect(ctx, -6.5, 21, 13, 11, 5);
+        paint(ctx, g, 2.2);
+        ctx.restore();
+      }
+      for (const s of [-1, 1]) {
+        rrect(ctx, s === -1 ? -17 : 2, 14, 15, 10, 4);
+        paint(ctx, g, 2.2);
+      }
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillRect(-15.5, 17, 2.4, 6);
+      ctx.fillRect(13.2, 17, 2.4, 6);
+      for (const s of [-1, 1]) {
+        const hop = s === -1 ? step : -step;
+        ctx.save();
+        ctx.translate(s * 8, hop);
+        rrect(ctx, -7.2, 20.2, 14.4, 4.2, 2);
+        paint(ctx, '#ffffff', 1.6);
+        ctx.restore();
+      }
+      rrect(ctx, -22, 4, 44, 18, 6);
+      paint(ctx, g, 2.4);
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(-5, 5);
+      ctx.quadraticCurveTo(0, 8.5, 5, 5);
+      ctx.stroke();
+      cheerTitle(ctx);
+      return;
+    }
     rrect(ctx, -10, 16 + step, 8, 13, 4); paint(ctx, '#5b4a7a', 2.5);
     rrect(ctx, 2, 16 - step, 8, 13, 4); paint(ctx, '#5b4a7a', 2.5);
-    if (o.cheer) {
-      ctx.beginPath(); ctx.moveTo(-15, 12); ctx.lineTo(15, 12); ctx.lineTo(19, 24); ctx.lineTo(-19, 24); ctx.closePath();
-      paint(ctx, '#9a5ad8', 2.5);
-      rrect(ctx, -12, 0, 24, 14, 6); paint(ctx, '#ff9a3d', 2.5);
-      ctx.fillStyle = '#fff'; ctx.font = `700 10px ${FONT}`; ctx.textAlign = 'center'; ctx.fillText('B', 0, 11);
-    } else {
-      rrect(ctx, -13, 2, 26, 20, 9); paint(ctx, '#8ec5ff', 3);
-      ctx.fillStyle = '#ffe36b'; circle(ctx, 0, 9, 2); ctx.fill(); circle(ctx, 0, 15, 2); ctx.fill();
+    rrect(ctx, -13, 2, 26, 20, 9); paint(ctx, '#8ec5ff', 3);
+    ctx.fillStyle = '#ffe36b'; circle(ctx, 0, 9, 2); ctx.fill(); circle(ctx, 0, 15, 2); ctx.fill();
+  },
+
+  pompom(ctx) {
+    const purple = '#9a5ad8', green = '#5ad86a';
+    for (let i = 0; i < 8; i++) {
+      const a = i / 8 * TAU;
+      circle(ctx, Math.cos(a) * 8, Math.sin(a) * 8, 5.4);
+      ctx.fillStyle = i % 2 ? purple : green;
+      ctx.fill();
     }
+    ctx.fillStyle = purple;
+    ctx.beginPath();
+    ctx.arc(0, 0, 5.5, -Math.PI / 2, Math.PI / 2);
+    ctx.fill();
+    ctx.fillStyle = green;
+    ctx.beginPath();
+    ctx.arc(0, 0, 5.5, Math.PI / 2, Math.PI * 1.5);
+    ctx.fill();
   },
 
   zombie(ctx, t, e = {}) {
@@ -393,25 +521,25 @@ const ART = {
   cheer(ctx, t, e = {}) {
     ART.zombieBody(ctx, t, { walk: true, cheer: true });
     const up = Math.sin(t * 9);
-    ART.zombieHead(ctx, t, { cheer: true, open: up > 0.6 });
+    ART.zombieHead(ctx, t, { cheer: true, open: up > 0.6, tail: false });
     for (const s of [-1, 1]) {
       const ay = s === 1 ? up : -up;
       ctx.save();
-      ctx.translate(s * 12, 1);
+      ctx.translate(s * 14, 6);
       ctx.rotate(s * (1.15 + ay * 0.22));
-      rrect(ctx, -3.2, -26, 6.4, 28, 3.2); paint(ctx, '#b8e89c', 2);
-      circle(ctx, 0, -28, 4.4); paint(ctx, '#b8e89c', 2);
-      ctx.translate(0, -34);
-      const purple = '#9a5ad8', green = '#5ad86a';
-      for (let i = 0; i < 8; i++) {
-        const a = i / 8 * TAU;
-        circle(ctx, Math.cos(a) * 8, Math.sin(a) * 8, 5.4);
-        ctx.fillStyle = i % 2 ? purple : green;
-        ctx.fill();
-      }
-      circle(ctx, 0, 0, 6); paint(ctx, s === 1 ? green : purple, 0);
+      const g = teamGradient(ctx, 0, 4, 0, -30);
+      rrect(ctx, -4.2, -28, 8.4, 32, 4);
+      paint(ctx, g, 2);
+      rrect(ctx, -4.6, -30, 9.2, 5, 2.4);
+      paint(ctx, '#ffffff', 1.6);
+      circle(ctx, 0, -33, 4.6);
+      paint(ctx, '#b8e89c', 2);
+      ctx.translate(0, -48);
+      ART.pompom(ctx);
       ctx.restore();
     }
+    cheerPonytail(ctx, t);
+    cheerTitle(ctx);
   },
 
   goblin(ctx, t, e = {}) {

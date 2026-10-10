@@ -1927,7 +1927,7 @@ function drawFx(f) {
         if (pc.part === 'head') { ART.face = f.t < 1.7 ? 'dizzy' : null; ART.zombieHead(ctx, t, { cheer }); ART.face = null; }
         else if (pc.part === 'body') ART.zombieBody(ctx, t, { cheer });
         else if (pc.part === 'teddy') { ctx.translate(26, 8); ART.teddy(ctx); }
-        else { ctx.translate(26, 8); for (let i = 0; i < 7; i++) { const a = i / 7 * TAU; circle(ctx, Math.cos(a) * 6, Math.sin(a) * 6, 5); ctx.fillStyle = '#ff6aa8'; ctx.fill(); } }
+        else { ctx.translate(26, 8); ART.pompom(ctx); }
         ctx.restore();
       }
       break;
